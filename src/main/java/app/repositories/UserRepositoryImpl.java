@@ -1,6 +1,5 @@
 package app.repositories;
 
-import app.connections.HibernateSessionFactory;
 import app.exceptions.DBException;
 import app.models.User;
 import org.hibernate.Session;
@@ -8,18 +7,17 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-
     private final SessionFactory sessionFactory;
 
     @Autowired
-    public UserRepositoryImpl(HibernateSessionFactory hibernateSessionFactory) {
-        this.sessionFactory = hibernateSessionFactory.getSessionFactory();
+    public UserRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
-
 
     @Override
     public boolean addUser(User user) {
@@ -100,10 +98,10 @@ public class UserRepositoryImpl implements UserRepository {
             transaction = session.beginTransaction();
             user = session.createQuery("from User where login = :login", User.class).setParameter("login", login).uniqueResult();
             transaction.commit();
-        }catch (Exception e){
+        } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             throw new DBException("User not found by login: " + login, e);
-        }finally {
+        } finally {
             session.close();
         }
         return user;
@@ -118,10 +116,10 @@ public class UserRepositoryImpl implements UserRepository {
             transaction = session.beginTransaction();
             list = session.createQuery("from User", User.class).list();
             transaction.commit();
-        }catch (Exception e){
-            if (transaction != null)transaction.rollback();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
             throw new DBException("No users found.. check connection", e);
-        }finally {
+        } finally {
             session.close();
         }
         return list;

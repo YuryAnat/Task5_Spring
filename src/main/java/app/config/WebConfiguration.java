@@ -1,5 +1,7 @@
 package app.config;
 
+import app.connections.HibernateConfiguration;
+import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -26,5 +28,10 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
         resolver.setSuffix(".jsp");
         resolver.setViewClass(JstlView.class);
         return resolver;
+    }
+
+    @Bean
+    public SessionFactory getSessionFactory(){
+        return new HibernateConfiguration().getConfiguration().buildSessionFactory();
     }
 }

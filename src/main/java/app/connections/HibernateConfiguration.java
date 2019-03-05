@@ -1,14 +1,9 @@
 package app.connections;
 
 import app.models.User;
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
 
-@Service
-@Scope("singleton")
-public class HibernateSessionFactory {
+public class HibernateConfiguration {
     private String host = "localhost";
     private String port = "5432";
     private String base = "crud";
@@ -20,19 +15,8 @@ public class HibernateSessionFactory {
     private String show_sql = "true";
     private String hbm2ddl = "update";
 
-    private SessionFactory sessionFactory;
-
-    public HibernateSessionFactory(){
-        Configuration configuration = getConfiguration();
-        sessionFactory =configuration.buildSessionFactory();
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
     private String getUrlConnection() {
-        return url + host + port + "/" + base;
+        return url + host + ":" + port + "/" + base;
     }
 
     public Configuration getConfiguration() {
@@ -47,6 +31,4 @@ public class HibernateSessionFactory {
         configuration.addAnnotatedClass(User.class);
         return configuration;
     }
-
-
 }
