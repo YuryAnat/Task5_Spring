@@ -6,18 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
 @Configuration
 @PropertySource("classpath:config.properties")
 public class HibernateConfiguration {
 
+    private final Environment env;
+
     @Autowired
-    private Environment env;
+    public HibernateConfiguration(Environment env) {
+        this.env = env;
+    }
 
     @Bean
-    @Scope("singleton")
     public SessionFactory getSessionFactory(){
         System.err.println(env.getProperty("host"));
         org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
