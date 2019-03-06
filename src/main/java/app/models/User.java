@@ -1,7 +1,11 @@
 package app.models;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -18,28 +22,30 @@ public class User {
     private String name;
     @Column(name = "email")
     private String email;
-    @Column(name = "role")
-    private String role;
 
+    @ElementCollection(targetClass = Roles.class,fetch = FetchType.EAGER)
+    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Roles> role;
 
     public User() {
     }
 
-    public User(String login, String password, String name, String email, String role) {
+    public User(String login, String password, String name, String email, String[] role) {
         this.login = login;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.role = role;
+        this.role = Arrays.stream(role).map(s -> Roles.valueOf((String) s)).collect(Collectors.toSet());
     }
 
-    public User(int id, String login, String password, String name, String email, String role) {
+    public User(int id, String login, String password, String name, String email, String[] role) {
         this.id = id;
         this.login = login;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.role = role;
+        this.role = Arrays.stream(role).map(s -> Roles.valueOf((String) s)).collect(Collectors.toSet());
     }
 
     public int getId() {
@@ -82,11 +88,11 @@ public class User {
         this.email = email;
     }
 
-    public String getRole() {
+    public Set<Roles> getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Set<Roles> role) {
         this.role = role;
     }
 

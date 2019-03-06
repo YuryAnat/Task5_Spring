@@ -29,10 +29,13 @@
             <input name="email" value="" type="email">
         <br>
             <label>Role</label>
-            <select name="role">
-                <option selected value="user">user</option>
-                <option value="admin">admin</option>
-            </select>
+        <br>
+            <input type="checkbox" name="role" value="USER" checked>USER
+            <input type="checkbox" name="role" value="ADMIN">ADMIN<br>
+            <%--<select name="role">--%>
+                <%--<option selected value="user">user</option>--%>
+                <%--<option value="admin">admin</option>--%>
+            <%--</select>--%>
         <br>
         <div>
             <button type="submit" name="add">Add user</button>

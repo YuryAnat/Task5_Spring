@@ -25,13 +25,17 @@
             <th>email</th>
             <th>role</th>
         </tr>
-        <c:forEach items="${users}" var="user" >
+        <c:forEach items="${users}" var="user">
             <tr>
                 <td>${user.id}</td>
                 <td>${user.login}</td>
                 <td>${user.name}</td>
                 <td>${user.email}</td>
-                <td>${user.role}</td>
+                <td>
+                    <c:forEach items="${user.role}" var="role">
+                        ${role.toString()}
+                    </c:forEach>
+                </td>
                 <td>
                     <button onclick="location.href='/admin/edit?id=${user.id}'">Edit user</button>
                 </td>

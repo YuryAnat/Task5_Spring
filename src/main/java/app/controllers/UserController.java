@@ -1,11 +1,15 @@
 package app.controllers;
 
+import app.models.Roles;
 import app.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import app.services.UserService;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 @Controller
 public class UserController {
@@ -37,8 +41,8 @@ public class UserController {
 
     @PostMapping(value = {"/admin/add"}, params = {"login", "password", "name", "email", "role"})
     public String uddUser(@RequestParam("login") String login, @RequestParam("password") String password, @RequestParam("name") String name,
-                          @RequestParam("email") String email, @RequestParam("role") String role, Model model){
-        User user = new User(login,password,name,email,role);
+                          @RequestParam("email") String email, @RequestParam("role") String[] role, Model model){
+        User user = new User(login,password,name,email, role);
         if (service.getUserByLogin(login) == null){
             service.addNewUser(user);
             return "redirect:/admin";
@@ -56,10 +60,10 @@ public class UserController {
     }
 
     @PostMapping(value = {"/admin/edit"},  params = {"id", "login", "password", "name", "email", "role"})
-    public String editUser(@RequestParam("id") String id, @RequestParam("login") String login, @RequestParam("password") String password, @RequestParam("name") String name,
-        @RequestParam("email") String email, @RequestParam("role") String role, Model model){
+    public String editUser(@RequestParam("id") String id, @RequestParam("login") String login, @RequestParam("password") String password,
+                           @RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("role") String[] role, Model model){
         User editUser = service.getUserByID(Integer.parseInt(id));
-        User editedUser = new User(Integer.parseInt(id),login,password,name,email,role);
+        User editedUser = new User(Integer.parseInt(id),login,password,name,email, role);
         if (editUser != null && service.getUserByLogin(login) == null){
             service.updateUser(editedUser);
             model.addAttribute("status", "User edited");
