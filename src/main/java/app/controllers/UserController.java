@@ -4,8 +4,6 @@ import app.models.Role;
 import app.models.User;
 import app.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,12 +43,10 @@ public class UserController {
     }
 
     @PostMapping(value = {"/admin/add"}, params = {"login", "password", "confPassword", "name", "email", "roles"})
-    public String uddUser(@RequestParam("login") String login, @RequestParam("password") String password, @RequestParam("confPassword") String ConfPassword, @RequestParam("name") String name,
-                          @RequestParam("email") String email, @RequestParam("roles") String[] role, Model model){
-        User user = new User(login,password,name,email);
+    public String uddUser(@ModelAttribute("user") User user, @RequestParam("roles") String[] role, Model model){
         Set<Role> roles = Arrays.stream(role).map(roleService::findRoleByName).collect(Collectors.toSet());
         user.setRoles(roles);
-        if (userService.getUserByLogin(login) == null){
+        if (userService.getUserByLogin(user.getLogin()) == null){
             userService.addNewUser(user);
             return "redirect:/admin";
         }else {
@@ -67,20 +63,18 @@ public class UserController {
     }
 
     @PostMapping(value = {"/admin/edit"},  params = {"id", "login", "password", "confPassword", "name", "email", "roles"})
-    public String editUser(@RequestParam("id") String id, @RequestParam("login") String login, @RequestParam("password") String password, @RequestParam("confPassword") String ConfPassword,
-                           @RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("roles") String[] role, Model model){
-        User editedUser = new User(Integer.parseInt(id),login,password,name,email);
+    public String editUser(@ModelAttribute("user") User editedUser, @RequestParam("roles") String[] role, Model model){
         Set<Role> roles = Arrays.stream(role).map(roleService::findRoleByName).collect(Collectors.toSet());
         for (Role role1 : roles) {
             role1.addUser(editedUser);
         }
         editedUser.setRoles(roles);
-        if (userService.getUserByID(Integer.parseInt(id)) != null){
+        if (userService.getUserByID(editedUser.getId()) != null){
             userService.updateUser(editedUser);
             model.addAttribute("status", "User edited");
             return "redirect:/admin";
         }else {
-            model.addAttribute("status", "No user found by id " + id);
+            model.addAttribute("status", "No user found by id " + editedUser.getId());
             model.addAttribute("user", editedUser);
             return "editUser";
         }
@@ -99,5 +93,10 @@ public class UserController {
     @GetMapping("/")
     public String startPage(){
         return "index";
+    }
+
+    @GetMapping("/403")
+    public String accessDenied(){
+        return "403";
     }
 }
