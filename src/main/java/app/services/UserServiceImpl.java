@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService{
 
     public void deleteUser(int id){
         userRepository.deleteUser(id);
-
     }
 
     public List<User> getAllUsers(){

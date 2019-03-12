@@ -1,5 +1,6 @@
 package app.config;
 
+import app.models.Role;
 import app.models.User;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class HibernateConfiguration {
         configuration.setProperty("hibernate.show_sql", env.getProperty("show_sql"));
         configuration.setProperty("hibernate.hbm2ddl.auto", env.getProperty("hbm2ddl"));
         configuration.addAnnotatedClass(User.class);
+        configuration.addAnnotatedClass(Role.class);
         return configuration.buildSessionFactory();
     }
 }

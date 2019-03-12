@@ -2,7 +2,6 @@ package app.models;
 
 import javax.persistence.*;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,29 +22,41 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @ElementCollection(targetClass = Roles.class,fetch = FetchType.EAGER)
-    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<Roles> role;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     public User() {
     }
 
-    public User(String login, String password, String name, String email, String[] role) {
+    public User(String login, String password, String name, String email, Set<Role> roles) {
         this.login = login;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.role = Arrays.stream(role).map(s -> Roles.valueOf((String) s)).collect(Collectors.toSet());
+        this.roles = roles;
+    }
+    public User(String login, String password, String name, String email) {
+        this.login = login;
+        this.password = password;
+        this.name = name;
+        this.email = email;
     }
 
-    public User(int id, String login, String password, String name, String email, String[] role) {
+    public User(int id, String login, String password, String name, String email, Set<Role> roles) {
         this.id = id;
         this.login = login;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.role = Arrays.stream(role).map(s -> Roles.valueOf((String) s)).collect(Collectors.toSet());
+        this.roles = roles;
+    }
+    public User(int id, String login, String password, String name, String email) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.name = name;
+        this.email = email;
     }
 
     public int getId() {
@@ -88,12 +99,12 @@ public class User {
         this.email = email;
     }
 
-    public Set<Roles> getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Set<Roles> role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -106,11 +117,11 @@ public class User {
                 Objects.equals(password, user.password) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email) &&
-                Objects.equals(role,this.role);
+                Objects.equals(roles,this.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password, name, email, role);
+        return Objects.hash(id, login, password, name, email, roles);
     }
 }

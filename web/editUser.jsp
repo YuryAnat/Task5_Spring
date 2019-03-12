@@ -6,6 +6,7 @@
 </head>
 <body>
 <div>
+    <button onclick="location.href='/logout'">Logout</button>
     <c:if test="${not empty status}">
         <c:out value="${status}"/>
         <br>
@@ -31,12 +32,8 @@
             <br>
             <label>Role</label>
             <br>
-                <input type="checkbox" name="role" value="USER">USER
-                <input type="checkbox" name="role" value="ADMIN">ADMIN<br>
-            <%--<select name="role">--%>
-                <%--<option selected value ="user">user</option>--%>
-                <%--<option value="admin">admin</option>--%>
-            <%--</select>--%>
+                <input type="checkbox" name="roles" value="USER">USER
+                <input type="checkbox" name="roles" value="ADMIN">ADMIN<br>
             <br>
         <div>
             <button type="submit" name="edit">Edit user</button>

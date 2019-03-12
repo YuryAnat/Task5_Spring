@@ -1,13 +1,12 @@
 package app.config;
 
-
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class ApplicationInit extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class<?>[]{
-                WebConfiguration.class
+                WebConfiguration.class, WebSecurityConfiguration.class
         };
     }
 

@@ -1,6 +1,7 @@
 package app.repositories;
 
 import app.exceptions.DBException;
+import app.models.Role;
 import app.models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,7 +9,9 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -22,8 +25,20 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean addUser(User user) {
         Session session = sessionFactory.openSession();
-        int result = (Integer) session.save(user);
-        session.close();
+        Transaction transaction = null;
+        int result;
+        try {
+            transaction = session.beginTransaction();
+            result = (Integer) session.save(user);
+            Set<Role> roles = user.getRoles();
+            roles.forEach(role -> role.addUser(user));
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            throw new DBException("Don't save user: " + user.getLogin(), e);
+        } finally {
+            session.close();
+        }
         return result > 0;
     }
 
@@ -34,15 +49,13 @@ public class UserRepositoryImpl implements UserRepository {
         int result;
         try {
             transaction = session.beginTransaction();
-            result = session.createQuery("update User set login = :login , password = :password, name = :name," +
-                    " email = :email , role = :role where id = :id")
-                    .setParameter("login", user.getLogin())
-                    .setParameter("password", user.getPassword())
-                    .setParameter("name", user.getName())
-                    .setParameter("email", user.getEmail())
-                    .setParameter("role", user.getRole())
-                    .setParameter("id", user.getId())
-                    .executeUpdate();
+            User editUser = session.load(User.class,user.getId());
+            editUser.setLogin(user.getLogin());
+            editUser.setPassword(user.getPassword());
+            editUser.setName(user.getName());
+            editUser.setEmail(user.getEmail());
+            editUser.setRoles(user.getRoles());
+            session.update(editUser);
             session.getTransaction().commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -50,7 +63,7 @@ public class UserRepositoryImpl implements UserRepository {
         } finally {
             session.close();
         }
-        return result > 0;
+        return true;
     }
 
     @Override

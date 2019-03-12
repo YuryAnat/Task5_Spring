@@ -8,6 +8,7 @@
 <body>
 <div>
     <button onclick="location.href='/admin/add'">Add user</button>
+    <button onclick="location.href='/logout'">Logout</button>
 </div>
 
 <div>
@@ -23,7 +24,7 @@
             <th>login</th>
             <th>name</th>
             <th>email</th>
-            <th>role</th>
+            <th>roles</th>
         </tr>
         <c:forEach items="${users}" var="user">
             <tr>
@@ -32,8 +33,8 @@
                 <td>${user.name}</td>
                 <td>${user.email}</td>
                 <td>
-                    <c:forEach items="${user.role}" var="role">
-                        ${role.toString()}
+                    <c:forEach items="${user.roles}" var="role">
+                        ${role.role}
                     </c:forEach>
                 </td>
                 <td>
