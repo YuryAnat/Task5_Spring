@@ -1,4 +1,4 @@
-package app.config;
+package app.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,10 +15,17 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
+    private final SuccessHandler successHandler;
 
     @Autowired
-    public WebSecurityConfiguration(UserDetailsService userDetailsService) {
+    public WebSecurityConfiguration(UserDetailsService userDetailsService, SuccessHandler successHandler) {
         this.userDetailsService = userDetailsService;
+        this.successHandler = successHandler;
+    }
+
+    @Autowired
+    public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -28,12 +35,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     GrantedAuthorityDefaults grantedAuthorityDefaults() {
-        return new GrantedAuthorityDefaults(""); // Remove the ROLE_ prefix
-    }
-
-    @Autowired
-    public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        return new GrantedAuthorityDefaults("");
     }
 
     @Override
@@ -41,11 +43,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.authorizeRequests().antMatchers("/").permitAll();
         http.authorizeRequests().antMatchers("/admin","/admin/**").access("hasRole('ADMIN')");
-//        http.authorizeRequests().antMatchers("/admin","/admin/**").hasRole("ADMIN");
         http.authorizeRequests().antMatchers("/user").access("hasAnyRole('USER','ADMIN')");
-//        http.authorizeRequests().antMatchers("/user").hasAnyRole("ADMIN","USER");
-//        http.authorizeRequests().antMatchers("/user").authenticated();
-        http.formLogin().loginPage("/login").permitAll().and().logout().permitAll();
+        http.formLogin().loginPage("/login").successHandler(successHandler).permitAll().and().logout().logoutSuccessUrl("/").permitAll()
+                .and().exceptionHandling().accessDeniedPage("/403");
     }
 }
 
