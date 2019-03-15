@@ -25,5 +25,9 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
                 .addResourceLocations("/");
+        registry.addResourceHandler("/webjars/css/**")
+                .addResourceLocations("/webjars/css/");
+        registry.addResourceHandler("/webjars/js/**")
+                .addResourceLocations("/webjars/js/");
     }
 }

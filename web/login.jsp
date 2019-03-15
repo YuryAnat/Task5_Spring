@@ -3,6 +3,8 @@
 <html>
 <head>
     <title>Title</title>
+    <link rel='stylesheet' href='webjars/bootstrap/4.1.1/css/bootstrap.min.css'>
+    <link href="resources/css/loginPage.css" rel="stylesheet">
 </head>
 <body>
 <div>
@@ -11,12 +13,17 @@
         <br>
     </c:if>
 </div>
-<div>
-    <form method="post">
-        <input name="username" type="text"><br>
-        <input name="password" type="password"><br>
-        <button type="submit" name="login">Log-in</button>
-    </form>
-</div>
+<form method="post" class="form-signin border">
+    <div class="form-label-group">
+        <H1>Please sign in</H1>
+    </div>
+    <div class="form-label-group">
+        <input name="username" type="text" class="form-control" placeholder="Enter login">
+    </div>
+    <div class="form-label-group">
+        <input name="password" type="password" class="form-control" placeholder="Enter password">
+    </div>
+    <button type="submit" name="login" class="btn-primary btn btn-block btn-lg">Log-in</button>
+</form>
 </body>
 </html>
