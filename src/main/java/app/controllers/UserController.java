@@ -4,11 +4,11 @@ import app.models.Role;
 import app.models.User;
 import app.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import app.services.UserService;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,8 +25,9 @@ public class UserController {
 
     @GetMapping(value = {"/admin"})
     public String viewAllUsersPage(Model model) {
+
         model.addAttribute("users", userService.getAllUsers());
-        return "listUsers";
+        return "admin";
     }
 
     @GetMapping(value = "/admin/delete", params = {"id"})
@@ -36,11 +37,11 @@ public class UserController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/add")
-    public String viewAddUserForm(Model model) {
-        model.addAttribute("user", new User());
-        return "addUser";
-    }
+//    @GetMapping("/admin/add")
+//    public String viewAddUserForm(Model model) {
+//        model.addAttribute("user", new User());
+//        return "addUser";
+//    }
 
     @PostMapping(value = {"/admin/add"}, params = {"login", "password", "confPassword", "name", "email", "roles"})
     public String uddUser(@ModelAttribute("user") User user, @RequestParam("roles") String[] role, Model model){
@@ -51,16 +52,16 @@ public class UserController {
             return "redirect:/admin";
         }else {
             model.addAttribute("status", "Login name is use");
-            return "addUser";
+            return "redirect:/admin";
         }
     }
 
-    @GetMapping(value = "/admin/edit", params = {"id"})
-    public String viewEditUserForm(@RequestParam String id, Model model) {
-        User editUser = userService.getUserByID(Integer.parseInt(id));
-        model.addAttribute("user", editUser);
-        return "editUser";
-    }
+//    @GetMapping(value = "/admin/edit", params = {"id"})
+//    public String viewEditUserForm(@RequestParam String id, Model model) {
+//        User editUser = userService.getUserByID(Integer.parseInt(id));
+//        model.addAttribute("user", editUser);
+//        return "editUser";
+//    }
 
     @PostMapping(value = {"/admin/edit"},  params = {"id", "login", "password", "confPassword", "name", "email", "roles"})
     public String editUser(@ModelAttribute("user") User editedUser, @RequestParam("roles") String[] role, Model model){
@@ -80,6 +81,15 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = {"/"})
+    public String viewAllUsersPage(Authentication authentication){
+        if (authentication != null && authentication.isAuthenticated()){
+            if (authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ADMIN"))) return "redirect:/admin";
+            if (authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("USER"))) return "redirect:/user";
+        }
+        return "redirect:/login";
+    }
+
     @GetMapping(value = {"/login"})
     public String loginPage(){
         return "login";
@@ -88,11 +98,6 @@ public class UserController {
     @GetMapping(value = "/user")
     public String userInfo(){
         return "userInfo";
-    }
-
-    @GetMapping("/")
-    public String startPage(){
-        return "index";
     }
 
     @GetMapping("/403")

@@ -8,8 +8,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -127,7 +125,7 @@ public class UserRepositoryImpl implements UserRepository {
         List<User> list = null;
         try {
             transaction = session.beginTransaction();
-            list = session.createQuery("from User", User.class).list();
+            list = session.createQuery("from User Order by id", User.class).list();
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();

@@ -1,29 +1,23 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Title</title>
-    <link rel='stylesheet' href='webjars/bootstrap/4.1.1/css/bootstrap.min.css'>
-    <link href="resources/css/loginPage.css" rel="stylesheet">
+    <link rel='stylesheet' href='webjars/bootstrap/4.3.1/css/bootstrap.min.css'>
 </head>
-<body>
-<div>
-    <c:if test="${not empty status}">
-        <c:out value="${status}"/>
-        <br>
-    </c:if>
+<body style="background: ghostwhite">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <br><br><br>
+            <h3 class="form-text">Please sign in</h3>
+            <form method="post">
+                <input name="username" class="form-control input-group-lg text" type="text" placeholder="Login">
+                <input name="password" class="form-control input-group-lg password-field" type="password" placeholder="Password">
+                <button type="submit" name="login" class="btn-primary btn btn-block btn-lg">Log-in</button>
+            </form>
+        </div>
+    </div>
 </div>
-<form method="post" class="form-signin border">
-    <div class="form-label-group">
-        <H1>Please sign in</H1>
-    </div>
-    <div class="form-label-group">
-        <input name="username" type="text" class="form-control" placeholder="Enter login">
-    </div>
-    <div class="form-label-group">
-        <input name="password" type="password" class="form-control" placeholder="Enter password">
-    </div>
-    <button type="submit" name="login" class="btn-primary btn btn-block btn-lg">Log-in</button>
-</form>
 </body>
 </html>
